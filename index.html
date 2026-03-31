@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Imposter Word 🕵️</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Fonts: Bebas Neue (display) + Nunito (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 1: WELCOME / LOBBY
+  ════════════════════════════════════════════ -->
+  <div id="screen-lobby" class="screen active">
+    <div class="lobby-bg-blobs">
+      <span class="blob blob1"></span>
+      <span class="blob blob2"></span>
+      <span class="blob blob3"></span>
+    </div>
+    <div class="lobby-content">
+      <div class="logo-area">
+        <span class="logo-icon">🕵️</span>
+        <h1 class="logo-title">IMPOSTER<br>WORD</h1>
+        <p class="logo-sub">The social deduction word game</p>
+      </div>
+
+      <!-- Difficulty Selector -->
+      <div class="section-card">
+        <label class="section-label">DIFFICULTY</label>
+        <div class="difficulty-row" id="difficulty-selector">
+          <button class="diff-btn active" data-diff="easy">Easy</button>
+          <button class="diff-btn" data-diff="medium">Medium</button>
+          <button class="diff-btn" data-diff="hard">Hard</button>
+        </div>
+      </div>
+
+      <!-- Player Name Entry -->
+      <div class="section-card">
+        <label class="section-label">PLAYERS <span id="player-count-label">(0)</span></label>
+        <div class="name-input-row">
+          <input type="text" id="player-name-input" class="name-input" placeholder="Enter player name…" maxlength="20" autocomplete="off" />
+          <button class="add-btn" id="add-player-btn">＋</button>
+        </div>
+        <ul class="player-list" id="player-list"></ul>
+      </div>
+
+      <button class="big-btn" id="start-game-btn" disabled>START GAME</button>
+      <p class="hint-text" id="lobby-hint">Add 3–10 players to begin</p>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 2: WORD REVEAL (per player)
+  ════════════════════════════════════════════ -->
+  <div id="screen-reveal" class="screen">
+    <div class="reveal-header">
+      <div class="round-badge" id="reveal-round-badge">ROUND 1</div>
+      <div class="player-turn-label">Pass to <span id="reveal-player-name">—</span></div>
+    </div>
+
+    <!-- State A: "Tap to reveal" -->
+    <div id="reveal-cover" class="reveal-cover">
+      <div class="cover-icon">🙈</div>
+      <p class="cover-text">Make sure no one else is looking!</p>
+      <button class="big-btn" id="reveal-btn">REVEAL MY WORD</button>
+    </div>
+
+    <!-- State B: Word shown -->
+    <div id="reveal-word-area" class="reveal-word-area hidden">
+      <div class="role-tag" id="reveal-role-tag">WORD</div>
+      <div class="big-word-card" id="reveal-word-card">
+        <span id="reveal-word-text">—</span>
+      </div>
+      <p class="reveal-sub" id="reveal-sub-text"></p>
+      <button class="big-btn btn-next" id="reveal-next-btn">NEXT PLAYER →</button>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 3: VOTING
+  ════════════════════════════════════════════ -->
+  <div id="screen-vote" class="screen">
+    <div class="vote-header">
+      <div class="round-badge" id="vote-round-badge">ROUND 1</div>
+      <h2 class="vote-title">Who's the Imposter? 🕵️</h2>
+      <p class="vote-subtitle">Discuss, then vote! Each player votes once.</p>
+    </div>
+
+    <!-- Individual voting sub-screens rotate through players -->
+    <div id="vote-player-cover" class="reveal-cover vote-cover">
+      <div class="cover-icon">🗳️</div>
+      <p class="cover-text">Pass to <strong id="vote-cover-name">—</strong> to cast their vote.</p>
+      <button class="big-btn" id="vote-reveal-btn">CAST MY VOTE</button>
+    </div>
+
+    <div id="vote-ballot" class="vote-ballot hidden">
+      <p class="ballot-label"><span id="ballot-voter-name">—</span>, choose the imposter:</p>
+      <ul class="vote-player-list" id="vote-options-list"></ul>
+      <button class="big-btn btn-vote" id="submit-vote-btn" disabled>SUBMIT VOTE</button>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 4: ROUND RESULT
+  ════════════════════════════════════════════ -->
+  <div id="screen-result" class="screen">
+    <div class="result-inner">
+      <div class="result-emoji" id="result-emoji">🎉</div>
+      <h2 class="result-title" id="result-title">Imposters Caught!</h2>
+      <p class="result-detail" id="result-detail"></p>
+
+      <div class="imposter-reveal-box" id="imposter-reveal-box">
+        <div class="ir-label">THE IMPOSTER(S) WERE:</div>
+        <div id="imposter-names-display"></div>
+        <div class="ir-word-label">The real word was:</div>
+        <div class="ir-word" id="result-real-word">—</div>
+      </div>
+
+      <button class="big-btn btn-next" id="result-leaderboard-btn">SEE LEADERBOARD →</button>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       SCREEN 5: LEADERBOARD
+  ════════════════════════════════════════════ -->
+  <div id="screen-leaderboard" class="screen">
+    <div class="lb-header">
+      <div class="round-badge" id="lb-round-badge">AFTER ROUND 1</div>
+      <h2 class="lb-title">🏆 LEADERBOARD</h2>
+    </div>
+    <ol class="lb-list" id="lb-list"></ol>
+    <div class="lb-actions">
+      <button class="big-btn" id="next-round-btn">NEXT ROUND →</button>
+      <button class="outline-btn" id="new-game-btn">NEW GAME</button>
+    </div>
+  </div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
