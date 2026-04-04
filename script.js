@@ -215,6 +215,7 @@ const STATE = {
   // Vote flow
   votes:          [],       // [{ voterIndex, accusedIndex }]
   voteStep:       0,        // which player is currently voting
+  cooldown: [],
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -343,6 +344,7 @@ lobbyEls.diffBtns.forEach(btn => {
 // Start game
 document.getElementById("start-game-btn").addEventListener("click", () => {
   STATE.round = 0;
+  STATE.cooldown = [];
   // Reset used-word tracking when a new game begins
   STATE.usedIndices = { easy: new Set(), medium: new Set(), hard: new Set() };
   startRound();
@@ -371,7 +373,11 @@ function startRound() {
 
   /* ── Pick imposter indices (random, no repeats) ── */
   const shuffledIndices = shuffle([...Array(n).keys()]);
-  STATE.impostors = shuffledIndices.slice(0, impostorCount);
+  while (STATE.cooldown.length < n) STATE.cooldown.push(0);
+let eligible = [...Array(n).keys()].filter(i => STATE.round - STATE.cooldown[i] > 2);
+if (eligible.length < impostorCount) eligible = [...Array(n).keys()];
+STATE.impostors = shuffle(eligible).slice(0, impostorCount);
+STATE.impostors.forEach(i => { STATE.cooldown[i] = STATE.round; });
 
   /* ── Pick a word from the pool ──────────── */
   const pool     = WORDS[STATE.difficulty];
@@ -683,6 +689,7 @@ document.getElementById("new-game-btn").addEventListener("click", () => {
   // Reset scores and round counter but keep player list
   STATE.players.forEach(p => { p.score = 0; });
   STATE.round = 0;
+  STATE.cooldown = [];
   STATE.usedIndices = { easy: new Set(), medium: new Set(), hard: new Set() };
   renderPlayerList();
   showScreen("screen-lobby");
